@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Hablame!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --celeste-bandera: #75AADB;
+            --blanco-bandera: #FFFFFF;
+            --sol-bandera: #FFC94D;
+            --texto-oscuro: #212529;
+            --sombra: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f2f5;
+            color: var(--texto-oscuro);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background-color: var(--blanco-bandera);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px var(--sombra);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            border-top: 8px solid var(--celeste-bandera);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sol-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px auto;
+            color: var(--sol-bandera);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--texto-oscuro);
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin: 0 0 30px 0;
+            line-height: 1.6;
+        }
+
+        .whatsapp-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background-color: var(--celeste-bandera);
+            color: var(--blanco-bandera);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 15px rgba(117, 170, 219, 0.5);
+        }
+
+        .whatsapp-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(117, 170, 219, 0.7);
+        }
+        
+        .whatsapp-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .footer-text {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <svg class="sol-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M24 33C28.9706 33 33 28.9706 33 24C33 19.0294 28.9706 15 24 15C19.0294 15 15 19.0294 15 24C15 28.9706 19.0294 33 24 33ZM24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="currentColor"/><path d="M24 8V4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M12.9289 12.9289L10.1005 10.1005" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M8 24H4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M12.9289 35.0711L10.1005 37.8995" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M24 40V44" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M35.0711 35.0711L37.8995 37.8995" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M40 24H44" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M35.0711 12.9289L37.8995 10.1005" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+        
+        <h1>¡Escribime, amigão!</h1>
+        
+        <p>Hacé clic acá abajo para mandarme un WhatsApp directo.</p>
+        
+        <a href="https://wa.me/5491150478929" class="whatsapp-button" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.4111 5.5843C16.4259 3.59911 13.8213 2.5 11.0829 2.5C5.55643 2.5 1.12744 6.92899 1.12744 12.4555C1.12744 14.3853 1.63844 16.202 2.56063 17.766L1.00033 23.0016L6.40243 21.4802C7.91053 22.3166 9.58983 22.802 11.3702 22.802H11.373C16.8995 22.802 21.3274 18.373 21.3274 12.8465C21.3274 10.107 20.3989 7.5684 18.4111 5.5843ZM11.373 20.973C9.79923 20.973 8.28893 20.5292 6.99343 19.6997L6.61843 19.4678L3.23923 20.327L4.11853 17.027L3.86433 16.6341C2.94313 15.2444 2.45263 13.6262 2.45263 11.9555C2.45263 7.74799 6.47163 3.824 10.6829 3.824C12.723 3.824 14.6366 4.63479 16.1411 6.13929C17.6456 7.64379 18.4553 9.5574 18.4553 11.5975C18.4553 15.805 14.4363 19.7289 10.225 19.7289C10.6089 19.728 11.0019 19.728 11.373 19.728C11.373 20.3587 11.373 20.973 11.373 20.973ZM15.6593 14.4168C15.372 14.2731 14.1137 13.6559 13.854 13.5511C13.5944 13.4463 13.4249 13.3989 13.2555 13.6862C13.086 13.9734 12.6074 14.538 12.4637 14.7075C12.32 14.877 12.1763 14.9007 11.889 14.757C11.6018 14.6133 10.7423 14.3166 9.71213 13.3989C8.89273 12.6641 8.35123 11.758 8.18173 11.4707C8.01223 11.1835 8.13463 11.0492 8.25413 10.9297C8.35893 10.8249 8.49043 10.6554 8.63403 10.5117C8.77773 10.368 8.82513 10.2731 8.92 10.0805C9.01483 9.88799 8.96743 9.71849 8.90183 9.57479C8.83613 9.43109 8.33383 8.17279 8.14063 7.70279C7.94743 7.23279 7.75423 7.30949 7.62553 7.30949C7.49683 7.30949 7.32733 7.30949 7.15783 7.30949C6.98833 7.30949 6.72883 7.35689 6.51193 7.64419C6.29503 7.93139 5.76903 8.41799 5.76903 9.48049C5.76903 10.543 6.53563 11.558 6.65513 11.7017C6.77463 11.8454 8.33083 14.2254 10.686 15.3059C13.0411 16.3863 13.0411 15.9392 13.5671 15.8918C14.0931 15.8444 15.1876 15.2509 15.4246 14.9636C15.6616 14.6764 15.6616 14.439 15.6593 14.4168Z" fill="white"/></svg>
+            <span>Chatear por WhatsApp</span>
+        </a>
+        
+        <p class="footer-text">
+            Mi número: +54 9 11 5047-8929
+        </p>
+    </div>
+
+</body>
+</html>
