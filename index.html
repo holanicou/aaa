@@ -5,18 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Un Mensaje Para Vos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Cormorant+Garamond:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            overflow: hidden;
             background-color: #000;
+            overflow-y: auto; /* Permitir scroll vertical */
         }
-        .font-dancing {
-            font-family: 'Dancing Script', cursive;
+        /* --- Scrollbar Personalizado --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f2027;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00cccc;
+        }
+        .font-special-message {
+            font-family: 'Cormorant Garamond', serif;
         }
         #background {
             position: fixed;
@@ -25,7 +38,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(-45deg, #1b2735, #090a0f, #2c3e50, #23a6d5);
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #e73c7e);
             background-size: 400% 400%;
             animation: gradient 20s ease infinite;
         }
@@ -38,8 +51,8 @@
             width: 180px;
             height: 180px;
             transition: transform 0.2s ease-in-out;
-            filter: drop-shadow(0 0 15px rgba(255, 20, 20, 0.7)) 
-                    drop-shadow(0 0 40px rgba(255, 20, 20, 0.5));
+            filter: drop-shadow(0 0 15px rgba(255, 20, 20, 0.8)) 
+                    drop-shadow(0 0 45px rgba(255, 20, 20, 0.6));
         }
         .heart.beating {
             animation: beat 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
@@ -59,7 +72,8 @@
             filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
         }
         .fade-in {
-            animation: fadeInAnimation 2s ease-in forwards;
+            animation: fadeInAnimation 2.5s 1s ease-in forwards;
+            opacity: 0;
         }
         @keyframes fadeInAnimation {
             from { opacity: 0; transform: translateY(20px); }
@@ -72,15 +86,39 @@
             from { opacity: 1; transform: scale(1); }
             to { opacity: 0; transform: scale(0.8); visibility: hidden; }
         }
-        #globe-container {
+        #animation-container {
+            position: relative;
             width: 100%;
-            max-width: 400px;
-            height: 400px;
-            margin: -2rem auto 0;
-            cursor: grab;
+            max-width: 500px;
+            height: 250px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeInCanvas 2s 0.5s ease-in forwards;
         }
-        #globe-container:active {
-            cursor: grabbing;
+        #constellation-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        @keyframes fadeInCanvas {
+            to { opacity: 1; }
+        }
+        #distance {
+            position: absolute;
+            top: 40%; /* Movido un poco más arriba */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            /* Misma fuente que 'Ni' y 'Bi' */
+            font-family: 'Inter', sans-serif;
+            font-weight: 700; /* bold */
+            font-size: 1.75rem; /* 28px */
+            /* Mismo efecto de brillo que las estrellas */
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.9), 0 0 25px rgba(0, 255, 255, 0.5);
+            z-index: 10;
+            color: #cfffff; /* Un cian más suave para integrarse mejor */
         }
     </style>
 </head>
@@ -88,8 +126,8 @@
     <div id="background"></div>
 
     <!-- Pantalla Inicial -->
-    <div id="start-screen" class="text-center p-8 flex flex-col items-center justify-center h-full">
-        <h1 class="text-2xl md:text-4xl mb-4 font-bold">Para la dueña de mis pensamientos</h1>
+    <div id="start-screen" class="text-center p-8 flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-2xl md:text-4xl mb-4 font-bold">Para mi amorcito</h1>
         <p class="text-lg md:text-xl mb-12">Mantén presionado este corazón por 7 segundos...</p>
         <div id="heart-container" class="relative inline-flex items-center justify-center cursor-pointer select-none">
             <svg class="w-56 h-56 absolute">
@@ -105,11 +143,13 @@
     </div>
 
     <!-- Pantalla de Mensaje -->
-    <div id="message-screen" class="hidden text-center p-4 max-w-3xl mx-auto">
-        <div id="globe-container"></div>
-        <div class="bg-black bg-opacity-40 backdrop-blur-md rounded-2xl p-6 shadow-2xl mt-4">
-            <h2 id="distance" class="text-3xl md:text-5xl font-bold text-cyan-300 mb-6"></h2>
-            <p class="font-dancing text-3xl md:text-4xl leading-relaxed">
+    <div id="message-screen" class="hidden text-center p-4 max-w-3xl w-full mx-auto">
+        <div id="animation-container">
+            <canvas id="constellation-canvas"></canvas>
+            <h2 id="distance" class="text-cyan-300"></h2>
+        </div>
+        <div class="bg-black bg-opacity-20 backdrop-blur-sm rounded-2xl p-6 shadow-2xl mt-4 fade-in">
+            <p class="font-special-message text-4xl md:text-5xl leading-relaxed">
                 "Sé que la distancia es enorme, y que tal vez tu corazón encuentre un nuevo hogar en Corea... pero sin importar cada uno de esos kilómetros, quiero que sepas que te extraño más de lo que las palabras pueden decir. Y aunque quieras estar con un coreano, este corazón sigue y seguirá latiendo por vos."
             </p>
         </div>
@@ -136,7 +176,7 @@
         // --- DISTANCIA ---
         const distance = 19321;
         const formattedDistance = new Intl.NumberFormat('es-AR').format(distance);
-        distanceDisplay.textContent = `${formattedDistance} km nos separan...`;
+        distanceDisplay.textContent = `${formattedDistance} km`; // Texto actualizado
 
         // --- LÓGICA DE INTERACCIÓN ---
         function setProgress(percent) {
@@ -171,10 +211,9 @@
         function showFinalMessage() {
             startScreen.classList.add('fade-out');
             startScreen.addEventListener('animationend', () => {
-                startScreen.classList.add('hidden');
+                startScreen.style.display = 'none'; // Ocultar completamente
                 messageScreen.classList.remove('hidden');
-                messageScreen.classList.add('fade-in');
-                initGlobe(); // Iniciar la animación del globo
+                initConstellationAnimation();
             }, { once: true });
         }
 
@@ -186,121 +225,104 @@
         heartContainer.addEventListener('touchend', cancelPress);
         heartContainer.addEventListener('touchcancel', cancelPress);
 
-        // --- LÓGICA DEL GLOBO 3D (Three.js) ---
-        function initGlobe() {
-            const container = document.getElementById('globe-container');
-            if (!container) return;
+        // --- LÓGICA DE LA ANIMACIÓN DE CONSTELACIÓN ---
+        function initConstellationAnimation() {
+            const container = document.getElementById('animation-container');
+            const canvas = document.getElementById('constellation-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
 
-            // Escena, Cámara, Renderer
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.z = 3.5;
-
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-
-            // Luces
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-            scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(5, 3, 5);
-            scene.add(directionalLight);
-
-            // Globo
-            const globeGeometry = new THREE.SphereGeometry(1.5, 64, 64);
-            const globeMaterial = new THREE.MeshPhongMaterial({
-                color: 0x2c3e50,
-                shininess: 10
-            });
-            const globe = new THREE.Mesh(globeGeometry, globeMaterial);
-            scene.add(globe);
-
-            // Función para convertir Lat/Lon a coordenadas 3D
-            function latLonToVector3(lat, lon, radius) {
-                const phi = (90 - lat) * (Math.PI / 180);
-                const theta = (lon + 180) * (Math.PI / 180);
-                const x = -(radius * Math.sin(phi) * Math.cos(theta));
-                const y = radius * Math.cos(phi);
-                const z = radius * Math.sin(phi) * Math.sin(theta);
-                return new THREE.Vector3(x, y, z);
+            // Estrellas de fondo
+            const stars = [];
+            for (let i = 0; i < 100; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random() * 0.5 + 0.2,
+                    twinkleSpeed: Math.random() * 0.015
+                });
             }
 
-            // Coordenadas
-            const myLocation = { lat: -34.6183, lon: -58.3780 }; // CABA
-            const herLocation = { lat: 35.8315, lon: 129.2115 }; // Gyeongju
-            const radiusGlobe = 1.5;
-
-            const startPoint = latLonToVector3(myLocation.lat, myLocation.lon, radiusGlobe);
-            const endPoint = latLonToVector3(herLocation.lat, herLocation.lon, radiusGlobe);
-
-            // Marcadores
-            const markerGeo = new THREE.SphereGeometry(0.03, 16, 16);
-            const markerMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, emissive: 0x00ffff });
+            // Nuestras estrellas y la línea
+            const p1 = { x: canvas.width * 0.15, y: canvas.height * 0.5 };
+            const p2 = { x: canvas.width * 0.85, y: canvas.height * 0.5 };
             
-            const startMarker = new THREE.Mesh(markerGeo, markerMat);
-            startMarker.position.copy(startPoint);
-            scene.add(startMarker);
-
-            const endMarker = new THREE.Mesh(markerGeo, markerMat);
-            endMarker.position.copy(endPoint);
-            scene.add(endMarker);
-
-            // Arco entre puntos
-            const arcHeight = 0.5;
-            const midPoint = new THREE.Vector3().addVectors(startPoint, endPoint).multiplyScalar(0.5);
-            const midLength = midPoint.length();
-            midPoint.normalize().multiplyScalar(midLength + arcHeight);
-
-            const curve = new THREE.CatmullRomCurve3([startPoint, midPoint, endPoint]);
-            const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.01, 8, false);
-            const tubeMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 });
-            const arc = new THREE.Mesh(tubeGeo, tubeMat);
-            scene.add(arc);
-
-            // Controles de mouse para rotar
-            let isMouseDown = false;
-            let previousMousePosition = { x: 0, y: 0 };
-            
-            container.addEventListener('mousedown', e => { isMouseDown = true; });
-            container.addEventListener('mouseup', e => { isMouseDown = false; });
-            container.addEventListener('touchstart', e => { isMouseDown = true; });
-            container.addEventListener('touchend', e => { isMouseDown = false; });
-
-            container.addEventListener('mousemove', e => {
-                if (!isMouseDown) return;
-                const deltaX = e.clientX - previousMousePosition.x;
-                const deltaY = e.clientY - previousMousePosition.y;
-                globe.rotation.y += deltaX * 0.005;
-                globe.rotation.x += deltaY * 0.005;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
-             container.addEventListener('touchmove', e => {
-                if (!isMouseDown || !e.touches[0]) return;
-                const touch = e.touches[0];
-                const deltaX = touch.clientX - previousMousePosition.x;
-                const deltaY = touch.clientY - previousMousePosition.y;
-                globe.rotation.y += deltaX * 0.005;
-                globe.rotation.x += deltaY * 0.005;
-                previousMousePosition = { x: touch.clientX, y: touch.clientY };
-            });
-
-            // Animación
-            function animate() {
-                requestAnimationFrame(animate);
-                if (!isMouseDown) {
-                    globe.rotation.y += 0.001;
-                }
-                renderer.render(scene, camera);
+            // Partículas de energía
+            const particles = [];
+            for (let i = 0; i < 20; i++) {
+                particles.push({ progress: Math.random() });
             }
-            animate();
 
-            // Responsividad
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                stars.forEach(star => {
+                    star.alpha += star.twinkleSpeed;
+                    if (star.alpha > 0.7 || star.alpha < 0.2) star.twinkleSpeed = -star.twinkleSpeed;
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                    ctx.fill();
+                });
+
+                const gradient = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+                gradient.addColorStop(0, "rgba(0, 255, 255, 0.1)");
+                gradient.addColorStop(0.5, "rgba(0, 255, 255, 0.5)");
+                gradient.addColorStop(1, "rgba(0, 255, 255, 0.1)");
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                particles.forEach(p => {
+                    p.progress += 0.005;
+                    if (p.progress > 1) p.progress = 0;
+                    const x = p1.x + (p2.x - p1.x) * p.progress;
+                    const y = p1.y + (p2.y - p1.y) * p.progress;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(173, 216, 230, 1)';
+                    ctx.shadowColor = 'rgba(173, 216, 230, 1)';
+                    ctx.shadowBlur = 15;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                const drawGlowingCircle = (x, y) => {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 8, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 255, 255, 1)';
+                    ctx.shadowColor = 'rgba(0, 255, 255, 1)';
+                    ctx.shadowBlur = 25;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                };
+                drawGlowingCircle(p1.x, p1.y);
+                drawGlowingCircle(p2.x, p2.y);
+
+                ctx.font = 'bold 18px Inter';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.textAlign = 'center';
+                ctx.fillText('Ni', p1.x, p1.y + 30);
+                ctx.fillText('Bi', p2.x, p2.y + 30);
+                
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+
             window.addEventListener('resize', () => {
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                p1.x = canvas.width * 0.15;
+                p1.y = canvas.height * 0.5;
+                p2.x = canvas.width * 0.85;
+                p2.y = canvas.height * 0.5;
             });
         }
     </script>
