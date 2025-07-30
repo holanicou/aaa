@@ -3,116 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Hablame!</title>
+    <title>Un Mensaje Para Vos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --celeste-bandera: #75AADB;
-            --blanco-bandera: #FFFFFF;
-            --sol-bandera: #FFC94D;
-            --texto-oscuro: #212529;
-            --sombra: rgba(0, 0, 0, 0.1);
-        }
-
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f0f2f5;
-            color: var(--texto-oscuro);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .card {
-            background-color: var(--blanco-bandera);
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px var(--sombra);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            border-top: 8px solid var(--celeste-bandera);
-            position: relative;
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
+            background-color: #000;
         }
-
-        .sol-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 20px auto;
-            color: var(--sol-bandera);
+        .font-dancing {
+            font-family: 'Dancing Script', cursive;
         }
-
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 0 0 10px 0;
-            color: var(--texto-oscuro);
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, #1b2735, #090a0f, #2c3e50, #23a6d5);
+            background-size: 400% 400%;
+            animation: gradient 20s ease infinite;
         }
-
-        p {
-            font-size: 1.1rem;
-            margin: 0 0 30px 0;
-            line-height: 1.6;
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-
-        .whatsapp-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background-color: var(--celeste-bandera);
-            color: var(--blanco-bandera);
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-decoration: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            box-shadow: 0 4px 15px rgba(117, 170, 219, 0.5);
+        .heart {
+            width: 180px;
+            height: 180px;
+            transition: transform 0.2s ease-in-out;
+            filter: drop-shadow(0 0 15px rgba(255, 20, 20, 0.7)) 
+                    drop-shadow(0 0 40px rgba(255, 20, 20, 0.5));
         }
-
-        .whatsapp-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(117, 170, 219, 0.7);
+        .heart.beating {
+            animation: beat 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
         }
-        
-        .whatsapp-button svg {
-            width: 24px;
-            height: 24px;
+        @keyframes beat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+            60% { transform: scale(1); }
+            100% { transform: scale(1); }
         }
-
-        .footer-text {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            color: #888;
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+        }
+        .fade-in {
+            animation: fadeInAnimation 2s ease-in forwards;
+        }
+        @keyframes fadeInAnimation {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-out {
+            animation: fadeOutAnimation 1.5s ease-out forwards;
+        }
+        @keyframes fadeOutAnimation {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.8); visibility: hidden; }
+        }
+        #globe-container {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin: -2rem auto 0;
+            cursor: grab;
+        }
+        #globe-container:active {
+            cursor: grabbing;
         }
     </style>
 </head>
-<body>
+<body class="text-white flex items-center justify-center min-h-screen">
+    <div id="background"></div>
 
-    <div class="card">
-        <svg class="sol-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M24 33C28.9706 33 33 28.9706 33 24C33 19.0294 28.9706 15 24 15C19.0294 15 15 19.0294 15 24C15 28.9706 19.0294 33 24 33ZM24 36C30.6274 36 36 30.6274 36 24C36 17.3726 30.6274 12 24 12C17.3726 12 12 17.3726 12 24C12 30.6274 17.3726 36 24 36Z" fill="currentColor"/><path d="M24 8V4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M12.9289 12.9289L10.1005 10.1005" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M8 24H4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M12.9289 35.0711L10.1005 37.8995" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M24 40V44" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M35.0711 35.0711L37.8995 37.8995" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M40 24H44" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M35.0711 12.9289L37.8995 10.1005" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
-        
-        <h1>¡Escribime, amigão!</h1>
-        
-        <p>Hacé clic acá abajo para mandarme un WhatsApp directo.</p>
-        
-        <a href="https://wa.me/5491150478929" class="whatsapp-button" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.4111 5.5843C16.4259 3.59911 13.8213 2.5 11.0829 2.5C5.55643 2.5 1.12744 6.92899 1.12744 12.4555C1.12744 14.3853 1.63844 16.202 2.56063 17.766L1.00033 23.0016L6.40243 21.4802C7.91053 22.3166 9.58983 22.802 11.3702 22.802H11.373C16.8995 22.802 21.3274 18.373 21.3274 12.8465C21.3274 10.107 20.3989 7.5684 18.4111 5.5843ZM11.373 20.973C9.79923 20.973 8.28893 20.5292 6.99343 19.6997L6.61843 19.4678L3.23923 20.327L4.11853 17.027L3.86433 16.6341C2.94313 15.2444 2.45263 13.6262 2.45263 11.9555C2.45263 7.74799 6.47163 3.824 10.6829 3.824C12.723 3.824 14.6366 4.63479 16.1411 6.13929C17.6456 7.64379 18.4553 9.5574 18.4553 11.5975C18.4553 15.805 14.4363 19.7289 10.225 19.7289C10.6089 19.728 11.0019 19.728 11.373 19.728C11.373 20.3587 11.373 20.973 11.373 20.973ZM15.6593 14.4168C15.372 14.2731 14.1137 13.6559 13.854 13.5511C13.5944 13.4463 13.4249 13.3989 13.2555 13.6862C13.086 13.9734 12.6074 14.538 12.4637 14.7075C12.32 14.877 12.1763 14.9007 11.889 14.757C11.6018 14.6133 10.7423 14.3166 9.71213 13.3989C8.89273 12.6641 8.35123 11.758 8.18173 11.4707C8.01223 11.1835 8.13463 11.0492 8.25413 10.9297C8.35893 10.8249 8.49043 10.6554 8.63403 10.5117C8.77773 10.368 8.82513 10.2731 8.92 10.0805C9.01483 9.88799 8.96743 9.71849 8.90183 9.57479C8.83613 9.43109 8.33383 8.17279 8.14063 7.70279C7.94743 7.23279 7.75423 7.30949 7.62553 7.30949C7.49683 7.30949 7.32733 7.30949 7.15783 7.30949C6.98833 7.30949 6.72883 7.35689 6.51193 7.64419C6.29503 7.93139 5.76903 8.41799 5.76903 9.48049C5.76903 10.543 6.53563 11.558 6.65513 11.7017C6.77463 11.8454 8.33083 14.2254 10.686 15.3059C13.0411 16.3863 13.0411 15.9392 13.5671 15.8918C14.0931 15.8444 15.1876 15.2509 15.4246 14.9636C15.6616 14.6764 15.6616 14.439 15.6593 14.4168Z" fill="white"/></svg>
-            <span>Chatear por WhatsApp</span>
-        </a>
-        
-        <p class="footer-text">
-            Mi número: +54 9 11 5047-8929
-        </p>
+    <!-- Pantalla Inicial -->
+    <div id="start-screen" class="text-center p-8 flex flex-col items-center justify-center h-full">
+        <h1 class="text-2xl md:text-4xl mb-4 font-bold">Para la dueña de mis pensamientos</h1>
+        <p class="text-lg md:text-xl mb-12">Mantén presionado este corazón por 7 segundos...</p>
+        <div id="heart-container" class="relative inline-flex items-center justify-center cursor-pointer select-none">
+            <svg class="w-56 h-56 absolute">
+                <circle class="text-transparent" stroke-width="8" stroke="rgba(255, 255, 255, 0.1)" fill="transparent" r="100" cx="112" cy="112"/>
+                <circle id="progress-circle" class="progress-ring__circle text-white" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="100" cx="112" cy="112"/>
+            </svg>
+            <div id="heart-button" class="heart text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            </div>
+        </div>
     </div>
 
+    <!-- Pantalla de Mensaje -->
+    <div id="message-screen" class="hidden text-center p-4 max-w-3xl mx-auto">
+        <div id="globe-container"></div>
+        <div class="bg-black bg-opacity-40 backdrop-blur-md rounded-2xl p-6 shadow-2xl mt-4">
+            <h2 id="distance" class="text-3xl md:text-5xl font-bold text-cyan-300 mb-6"></h2>
+            <p class="font-dancing text-3xl md:text-4xl leading-relaxed">
+                "Sé que la distancia es enorme, y que tal vez tu corazón encuentre un nuevo hogar en Corea... pero sin importar cada uno de esos kilómetros, quiero que sepas que te extraño más de lo que las palabras pueden decir. Y aunque quieras estar con un coreano, este corazón sigue y seguirá latiendo por vos."
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN INICIAL ---
+        const heartContainer = document.getElementById('heart-container');
+        const heartButton = document.getElementById('heart-button');
+        const startScreen = document.getElementById('start-screen');
+        const messageScreen = document.getElementById('message-screen');
+        const distanceDisplay = document.getElementById('distance');
+        
+        const progressCircle = document.getElementById('progress-circle');
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
+
+        let holdDuration = 0;
+        const requiredHoldTime = 7000; // 7 segundos
+        let interval;
+
+        // --- DISTANCIA ---
+        const distance = 19321;
+        const formattedDistance = new Intl.NumberFormat('es-AR').format(distance);
+        distanceDisplay.textContent = `${formattedDistance} km nos separan...`;
+
+        // --- LÓGICA DE INTERACCIÓN ---
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+
+        function startPress() {
+            holdDuration = 0;
+            setProgress(0);
+            heartButton.classList.add('beating');
+            
+            const startTime = Date.now();
+            interval = setInterval(() => {
+                holdDuration = Date.now() - startTime;
+                const progress = Math.min((holdDuration / requiredHoldTime) * 100, 100);
+                setProgress(progress);
+
+                if (holdDuration >= requiredHoldTime) {
+                    showFinalMessage();
+                    clearInterval(interval);
+                }
+            }, 50);
+        }
+
+        function cancelPress() {
+            clearInterval(interval);
+            heartButton.classList.remove('beating');
+            setProgress(0);
+        }
+
+        function showFinalMessage() {
+            startScreen.classList.add('fade-out');
+            startScreen.addEventListener('animationend', () => {
+                startScreen.classList.add('hidden');
+                messageScreen.classList.remove('hidden');
+                messageScreen.classList.add('fade-in');
+                initGlobe(); // Iniciar la animación del globo
+            }, { once: true });
+        }
+
+        // Event Listeners
+        heartContainer.addEventListener('mousedown', startPress);
+        heartContainer.addEventListener('mouseup', cancelPress);
+        heartContainer.addEventListener('mouseleave', cancelPress);
+        heartContainer.addEventListener('touchstart', (e) => { e.preventDefault(); startPress(); });
+        heartContainer.addEventListener('touchend', cancelPress);
+        heartContainer.addEventListener('touchcancel', cancelPress);
+
+        // --- LÓGICA DEL GLOBO 3D (Three.js) ---
+        function initGlobe() {
+            const container = document.getElementById('globe-container');
+            if (!container) return;
+
+            // Escena, Cámara, Renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 3.5;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Luces
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 3, 5);
+            scene.add(directionalLight);
+
+            // Globo
+            const globeGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+            const globeMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2c3e50,
+                shininess: 10
+            });
+            const globe = new THREE.Mesh(globeGeometry, globeMaterial);
+            scene.add(globe);
+
+            // Función para convertir Lat/Lon a coordenadas 3D
+            function latLonToVector3(lat, lon, radius) {
+                const phi = (90 - lat) * (Math.PI / 180);
+                const theta = (lon + 180) * (Math.PI / 180);
+                const x = -(radius * Math.sin(phi) * Math.cos(theta));
+                const y = radius * Math.cos(phi);
+                const z = radius * Math.sin(phi) * Math.sin(theta);
+                return new THREE.Vector3(x, y, z);
+            }
+
+            // Coordenadas
+            const myLocation = { lat: -34.6183, lon: -58.3780 }; // CABA
+            const herLocation = { lat: 35.8315, lon: 129.2115 }; // Gyeongju
+            const radiusGlobe = 1.5;
+
+            const startPoint = latLonToVector3(myLocation.lat, myLocation.lon, radiusGlobe);
+            const endPoint = latLonToVector3(herLocation.lat, herLocation.lon, radiusGlobe);
+
+            // Marcadores
+            const markerGeo = new THREE.SphereGeometry(0.03, 16, 16);
+            const markerMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, emissive: 0x00ffff });
+            
+            const startMarker = new THREE.Mesh(markerGeo, markerMat);
+            startMarker.position.copy(startPoint);
+            scene.add(startMarker);
+
+            const endMarker = new THREE.Mesh(markerGeo, markerMat);
+            endMarker.position.copy(endPoint);
+            scene.add(endMarker);
+
+            // Arco entre puntos
+            const arcHeight = 0.5;
+            const midPoint = new THREE.Vector3().addVectors(startPoint, endPoint).multiplyScalar(0.5);
+            const midLength = midPoint.length();
+            midPoint.normalize().multiplyScalar(midLength + arcHeight);
+
+            const curve = new THREE.CatmullRomCurve3([startPoint, midPoint, endPoint]);
+            const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.01, 8, false);
+            const tubeMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 });
+            const arc = new THREE.Mesh(tubeGeo, tubeMat);
+            scene.add(arc);
+
+            // Controles de mouse para rotar
+            let isMouseDown = false;
+            let previousMousePosition = { x: 0, y: 0 };
+            
+            container.addEventListener('mousedown', e => { isMouseDown = true; });
+            container.addEventListener('mouseup', e => { isMouseDown = false; });
+            container.addEventListener('touchstart', e => { isMouseDown = true; });
+            container.addEventListener('touchend', e => { isMouseDown = false; });
+
+            container.addEventListener('mousemove', e => {
+                if (!isMouseDown) return;
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+                globe.rotation.y += deltaX * 0.005;
+                globe.rotation.x += deltaY * 0.005;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+             container.addEventListener('touchmove', e => {
+                if (!isMouseDown || !e.touches[0]) return;
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - previousMousePosition.x;
+                const deltaY = touch.clientY - previousMousePosition.y;
+                globe.rotation.y += deltaX * 0.005;
+                globe.rotation.x += deltaY * 0.005;
+                previousMousePosition = { x: touch.clientX, y: touch.clientY };
+            });
+
+            // Animación
+            function animate() {
+                requestAnimationFrame(animate);
+                if (!isMouseDown) {
+                    globe.rotation.y += 0.001;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Responsividad
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+    </script>
 </body>
 </html>
